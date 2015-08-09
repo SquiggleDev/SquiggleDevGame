@@ -1,0 +1,30 @@
+<project>
+
+    <target name="clean">
+        <delete dir="build"/>
+        <delete dir="dist"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="build"/>
+        <javac srcdir="src" destdir="build"/>
+        <copy todir="build">
+            <fileset dir="res" />
+        </copy>
+    </target>
+
+    <target name="jar">
+        <mkdir dir="dist/jar"/>
+        <jar destfile="dist/jar/Game.jar" basedir="build">
+            <manifest>
+                <attribute name="Main-Class" 
+                           value="ie.squiggledev.game.Game"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run">
+        <java jar="dist/jar/Game.jar" fork="true"/>
+    </target>
+
+</project>
