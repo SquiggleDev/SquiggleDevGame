@@ -29,6 +29,7 @@ public class Game extends Canvas implements Runnable {
     public static final int HEIGHT = WIDTH / 12 * 9;
     public static final int SCALE = 3;
     public static final String NAME = "Game";
+    public static final String RES = "/res/";
     public boolean running = false;
     public int tickCount = 0;
     public InputHandler input;
@@ -79,9 +80,9 @@ public class Game extends Canvas implements Runnable {
             }
         }
     
-        this.screen = new Screen(WIDTH, HEIGHT, new SpriteSheet("/sprite_sheet.png"));
+        this.screen = new Screen(WIDTH, HEIGHT, new SpriteSheet(RES + "sprite_sheet.png"));
         this.input = new InputHandler(this);
-        this.level = new Level("/level/water_test_level.png");
+        this.level = new Level(RES + "level/water_test_level.png");
         this.player = new Player(level, 0, 0, input);
         level.addEntity(player);
     }

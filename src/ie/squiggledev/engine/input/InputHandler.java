@@ -6,34 +6,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class InputHandler implements KeyListener {
-    public InputHandler(Game game) {
-        game.addKeyListener(this);
-    }
-
-    public class Key {
-        private int numTimesPressed = 0;
-        private boolean pressed = false;
-        
-        public int getNumTimesPressed() {
-            return numTimesPressed;
-        }
-        
-        public boolean isPressed() {
-            return pressed;
-        }
-        
-        public void toggle(boolean isPressed) {
-            this.pressed = isPressed;
-            if (isPressed) {
-                numTimesPressed++;
-            }
-        }
-    }
-    
     public Key up = new Key();
     public Key down = new Key();
     public Key left = new Key();
     public Key right = new Key();
+
+    public InputHandler(Game game) {
+        game.addKeyListener(this);
+    }
 
     public void keyPressed(KeyEvent e) {
         toggleKey(e.getKeyCode(), true);
@@ -59,6 +39,26 @@ public class InputHandler implements KeyListener {
         }
         if (keyCode == KeyEvent.VK_D || keyCode == KeyEvent.VK_RIGHT) {
             right.toggle(isPressed);
+        }
+    }
+
+    public class Key {
+        private int numTimesPressed = 0;
+        private boolean pressed = false;
+        
+        public int getNumTimesPressed() {
+            return numTimesPressed;
+        }
+        
+        public boolean isPressed() {
+            return pressed;
+        }
+        
+        public void toggle(boolean isPressed) {
+            this.pressed = isPressed;
+            if (isPressed) {
+                numTimesPressed++;
+            }
         }
     }
 }
