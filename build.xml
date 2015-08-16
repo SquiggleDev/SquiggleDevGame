@@ -1,53 +1,94 @@
 <project name="SquiggleDevGame" basedir=".">
 
     <description>
-        A game developed following the youtube series of DesignsbyZephyr;
-        https://www.youtube.com/playlist?list=PL8CAB66181A502179
+        A game developed by initially following the youtube series of
+        DesignsbyZephyr
+        (https://www.youtube.com/playlist?list=PL8CAB66181A502179), then later
+        expanded by SquiggleDev.
     </description>
 
-    <!-- Global Properties -->
+    <!-- Global properties -->
     <property name="src" location="src" />
-    <property name="build" location="build" />
-    <property name="dist"  location="dist" />
     <property name="res"  location="res" />
+    <property name="doc" location="doc" />
+    <property name="build" location="build" />
+    <property name="dev" location="dev" />
+    <property name="dist"  location="dist" />
     <property name="main-class"  value="ie.squiggledev.game.Game" />
 
-    <!--TODO: review need for 'depends' attribute-->
-    <target name="init" depends="clean">
-        <tstamp />
-        
+    <!-- Create directories -->
+    <target name="init">
+        <mkdir dir="${doc}" />
         <mkdir dir="${build}" />
         <mkdir dir="${build}/res" />
+        <mkdir dir="${dev}" />
+        <mkdir dir="${dist}" />
     </target>
 
-    <target name="clean">
-        <delete dir="${build}" />
-        <delete dir="${dist}" />
-    </target>
-
+    <!-- Compile to build directory -->
     <target name="compile" depends="init">
         <javac includeantruntime="false" srcdir="${src}" destdir="${build}"/>
-
         <copy todir="${build}/res">
             <fileset dir="${res}" />
         </copy>
     </target>
 
-    <target name="jar">
-        <mkdir dir="${dist}"/>
-
-        <jar destfile="${dist}/${ant.project.name}.jar" basedir="build">
+    <!-- Create jar file in dev directory -->
+    <target name="dev-jar" depends="init">
+        <jar destfile="${dev}/${ant.project.name}.jar" basedir="build">
             <manifest>
                 <attribute name="Main-Class" value="${main-class}"/>
             </manifest>
         </jar>
     </target>
 
-    <target name="run">
-        <java jar="${dist}/${ant.project.name}.jar" fork="true"/>
+    <!-- Create jar file in dist directory -->
+    <target name="release-jar" depends="init">
+        <tstamp />
+        <delete file= "${dist}/${ant.project.name}-latest.jar" />
+        <jar destfile="${dist}/${ant.project.name}-${DSTAMP}-${TSTAMP}.jar"
+             basedir="build">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+        <jar destfile="${dist}/${ant.project.name}-latest.jar" basedir="build">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
     </target>
 
-    <target name="dev-run" depends="compile, jar, run">
+    <!-- Generate javadocs for current project into ${doc} -->
+    <target name="doc" depends="init">
+        <javadoc sourcepath="${src}" destdir="${doc}"/>
     </target>
 
+    <!-- Runs the latest dev jar file  -->
+    <target name="dev-run">
+        <java jar="${dev}/${ant.project.name}.jar" fork="true"/>
+    </target>
+
+    <!-- Runs the latest release jar file  -->
+    <target name="release-run">
+        <java jar="${dist}/${ant.project.name}-latest.jar" fork="true"/>
+    </target>
+
+    <!-- TODO: Do we need to remove these directories? Javadoc seems to just
+               update files in the doc directory, maybe build and jar do
+               the same? In which case, maybe this 'clean' should do something
+               else? -->
+    <!-- Removes the doc, build, and dev directories-->
+    <target name="clean">
+        <delete dir="${doc}" />
+        <delete dir="${build}" />
+        <delete dir="${dev}" />
+    </target>
+
+    <target name="dev" depends="clean, compile, dev-jar, doc, dev-run">
+    </target>
+
+    <target name="release"
+            depends="clean, compile, release-jar, doc, release-run">
+    </target>
 </project>
